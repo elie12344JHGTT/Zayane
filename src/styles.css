@@ -1869,3 +1869,18 @@ footer span {
 .payment-alert {
   overflow-wrap: anywhere;
 }
+@media (max-width: 760px) {
+  .product-card {
+    grid-template-rows: clamp(210px, 56vw, 230px) auto auto;
+  }
+
+  .image-wrap {
+    height: clamp(210px, 56vw, 230px);
+  }
+
+  .image-wrap > img {
+    width: 86%;
+    height: 86%;
+    object-fit: contain;
+  }
+}
