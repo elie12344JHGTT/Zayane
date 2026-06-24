@@ -1,9 +1,7 @@
 <?php
 require_once __DIR__ . '/../config.php';
 
-header('Access-Control-Allow-Origin: http://127.0.0.1:5173');
-header('Access-Control-Allow-Headers: Content-Type');
-header('Access-Control-Allow-Methods: POST, OPTIONS');
+apply_cors_headers();
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(204);
@@ -187,3 +185,4 @@ json_response([
     'amount' => $amount,
     'currency' => $currency,
 ], $ok ? 200 : 422);
+

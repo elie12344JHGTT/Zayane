@@ -24,6 +24,22 @@ function config_value(string $key, ?string $default = null): ?string
     return $value !== false && $value !== null && $value !== '' ? $value : $default;
 }
 
+function apply_cors_headers(): void
+{
+    $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+    $allowed = array_filter(array_map('trim', explode(',', (string)config_value(
+        'CORS_ALLOWED_ORIGINS',
+        'http://127.0.0.1:5173,http://localhost:5173'
+    ))));
+
+    if ($origin !== '' && in_array($origin, $allowed, true)) {
+        header("Access-Control-Allow-Origin: $origin");
+        header('Vary: Origin');
+    }
+
+    header('Access-Control-Allow-Headers: Content-Type');
+    header('Access-Control-Allow-Methods: POST, OPTIONS');
+}
 function json_response(array $payload, int $status = 200): void
 {
     http_response_code($status);
@@ -40,4 +56,6 @@ function require_config(string $key): string
     }
     return $value;
 }
+
+
 

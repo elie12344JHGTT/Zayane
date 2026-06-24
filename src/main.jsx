@@ -1,10 +1,13 @@
 import React, { useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
+
 import HomePage from './pages/HomePage.jsx';
 import BoutiquePage from './pages/BoutiquePage.jsx';
 import ContactPage from './pages/ContactPage.jsx';
 import { cdfMoney, money, products, USD_TO_CDF } from './data.js';
 import './styles.css';
+
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
 
 function App() {
   const [category, setCategory] = useState('all');
@@ -203,7 +206,7 @@ function CartPage({ cart, total, customer, setCustomer, checkout, setCheckout, o
 
     setPaymentState({ loading: true, message: '', status: '' });
     try {
-      const response = await fetch('/api/easypay/checkout.php', {
+      const response = await fetch(`${API_BASE_URL}/api/easypay/checkout.php`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -317,6 +320,8 @@ function CartPage({ cart, total, customer, setCustomer, checkout, setCheckout, o
 }
 
 createRoot(document.getElementById('root')).render(<App />);
+
+
 
 
 
