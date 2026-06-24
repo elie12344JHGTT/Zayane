@@ -2,6 +2,7 @@ export default function HomePage({ onCollection }) {
   return (
     <>
       <section className="hero" id="top">
+        <img className="hero-fallback" src="/assets/acceuil_img.jpg" alt="" />
         <video autoPlay muted loop playsInline poster="/assets/acceuil_img.jpg">
           <source src="/accueil_video.mp4" type="video/mp4" />
         </video>
@@ -115,4 +116,6 @@ export default function HomePage({ onCollection }) {
       </footer>    </>
   );
 }
+
+
 
