@@ -7,7 +7,18 @@ import ContactPage from './pages/ContactPage.jsx';
 import { cdfMoney, money, products, USD_TO_CDF } from './data.js';
 import './styles.css';
 
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
+function getApiBaseUrl() {
+  const configuredUrl = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
+  if (configuredUrl) return configuredUrl;
+
+  if (window.location.hostname === 'zayane.onrender.com') {
+    return 'https://zayane-api.onrender.com';
+  }
+
+  return '';
+}
+
+const API_BASE_URL = getApiBaseUrl();
 
 function useScrollReveal(refreshKey) {
   useEffect(() => {
@@ -422,4 +433,5 @@ function CartPage({ cart, total, customer, setCustomer, checkout, setCheckout, o
 }
 
 createRoot(document.getElementById('root')).render(<App />);
+
 
