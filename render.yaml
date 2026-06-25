@@ -15,7 +15,7 @@ services:
     healthCheckPath: /api/health.php
     envVars:
       - key: EASYPAY_MODE
-        value: sandbox
+        value: v2
       - key: EASYPAY_CID
         sync: false
       - key: EASYPAY_TOKEN
@@ -28,3 +28,4 @@ services:
         value: 2850
       - key: EASYPAY_SSL_VERIFY
         value: true
+
