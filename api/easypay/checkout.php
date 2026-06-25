@@ -66,7 +66,7 @@ if (count($orderLines) > 6) {
     $description .= '...';
 }
 
-$mode = require_config('EASYPAY_MODE');
+$mode = config_value('EASYPAY_MODE', 'sandbox');
 $cid = require_config('EASYPAY_CID');
 $token = require_config('EASYPAY_TOKEN');
 $baseUrl = rtrim((string)config_value('APP_BASE_URL', 'http://127.0.0.1:5173'), '/');
