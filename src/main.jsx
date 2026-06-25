@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import HomePage from './pages/HomePage.jsx';
@@ -9,6 +9,37 @@ import './styles.css';
 
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
 
+function useScrollReveal(refreshKey) {
+  useEffect(() => {
+    const elements = Array.from(document.querySelectorAll('[data-reveal]'));
+
+    if (!elements.length) return undefined;
+
+    if (!('IntersectionObserver' in window)) {
+      elements.forEach((element) => element.classList.add('is-visible'));
+      return undefined;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.16, rootMargin: '0px 0px -8% 0px' },
+    );
+
+    elements.forEach((element) => {
+      if (element.classList.contains('is-visible')) return;
+      observer.observe(element);
+    });
+
+    return () => observer.disconnect();
+  }, [refreshKey]);
+}
 function getPaymentNotice() {
   const params = new URLSearchParams(window.location.search);
   const status = params.get('payment');
@@ -51,6 +82,9 @@ function App() {
 
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const scrollRevealKey = `${page}-${category}-${filteredProducts.length}-${cart.length}`;
+
+  useScrollReveal(scrollRevealKey);
 
   function goHome() {
     setPage('home');
@@ -301,7 +335,7 @@ function CartPage({ cart, total, customer, setCustomer, checkout, setCheckout, o
 
   return (
     <section className="cart-page">
-      <div className="cart-page-heading">
+      <div className="cart-page-heading" data-reveal>
         <button className="back-icon" onClick={onBack} aria-label="Retour a la boutique">
           <img src="/assets/angle-left-solid.png" alt="" />
         </button>
@@ -309,7 +343,7 @@ function CartPage({ cart, total, customer, setCustomer, checkout, setCheckout, o
         <h1>Finaliser votre commande</h1>
       </div>
       <div className="checkout-layout">
-        <form className="checkout-form">
+        <form className="checkout-form" data-reveal>
           <div>
             <p>Informations client</p>
             <h2>Adresse et contact</h2>
@@ -369,23 +403,23 @@ function CartPage({ cart, total, customer, setCustomer, checkout, setCheckout, o
             </button>
           </div>
         </form>
-        <CartPanel cart={cart} total={total} onQty={onQty} canCheckout={canCheckout} onCheckout={handleCheckout} isProcessing={paymentState.loading} paymentMessage={paymentState.message} paymentStatus={paymentState.status} checkout />
+        <div data-reveal>
+          <CartPanel
+            cart={cart}
+            total={total}
+            onQty={onQty}
+            canCheckout={canCheckout}
+            onCheckout={handleCheckout}
+            isProcessing={paymentState.loading}
+            paymentMessage={paymentState.message}
+            paymentStatus={paymentState.status}
+            checkout
+          />
+        </div>
       </div>
     </section>
   );
 }
 
 createRoot(document.getElementById('root')).render(<App />);
-
-
-
-
-
-
-
-
-
-
-
-
 

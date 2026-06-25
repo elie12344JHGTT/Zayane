@@ -17,30 +17,30 @@ export default function HomePage({ onCollection }) {
         </div>
       </section>
 
-      <section className="home-editorial">
+      <section className="home-editorial" data-reveal>
         <div className="editorial-benefits">
-          <article>
+          <article data-reveal>
             <span>01</span>
             <div>
               <h3>Pieces selectionnees</h3>
               <p>Des vetements choisis pour leur coupe, leur confort et leur allure.</p>
             </div>
           </article>
-          <article>
+          <article data-reveal>
             <span>02</span>
             <div>
               <h3>Style quotidien</h3>
               <p>Des looks faciles a porter pour travailler, sortir ou celebrer.</p>
             </div>
           </article>
-          <article>
+          <article data-reveal>
             <span>03</span>
             <div>
               <h3>Paiement facile</h3>
               <p>Une experience d'achat fluide, du choix des pieces jusqu'a la commande.</p>
             </div>
           </article>
-          <article>
+          <article data-reveal>
             <span>04</span>
             <div>
               <h3>Service rapide</h3>
@@ -49,7 +49,7 @@ export default function HomePage({ onCollection }) {
           </article>
         </div>
 
-        <div className="editorial-main">
+        <div className="editorial-main" data-reveal>
           <img src="/assets/home_img_2.jpg" alt="Campagne Zayane" />
           <div className="editorial-copy">
             <p>Sur Zayane</p>
@@ -67,7 +67,7 @@ export default function HomePage({ onCollection }) {
           </div>
         </div>
 
-        <div className="editorial-process">
+        <div className="editorial-process" data-reveal>
           <div className="process-copy">
             <p>Comment choisir</p>
             <h2>Un parcours simple, a ton rythme.</h2>
@@ -82,15 +82,15 @@ export default function HomePage({ onCollection }) {
         </div>
 
         <div className="editorial-cards">
-          <article>
+          <article data-reveal>
             <h3>Public vise</h3>
             <p>Femmes, hommes et clients qui veulent une boutique claire.</p>
           </article>
-          <article>
+          <article data-reveal>
             <h3>Collections</h3>
             <p>Robes, chemises, polos et pantalons disponibles dans la boutique.</p>
           </article>
-          <article className="highlight">
+          <article className="highlight" data-reveal>
             <h3>Agencement</h3>
             <p>Accede directement aux nouveautes ou ouvre toute la boutique.</p>
             <button onClick={onCollection}>Explorer</button>
@@ -98,7 +98,7 @@ export default function HomePage({ onCollection }) {
         </div>
       </section>
 
-      <section className="brand-section home-brand-section">
+      <section className="brand-section home-brand-section" data-reveal>
         <div>
           <p>R.Zayane</p>
           <h2>Une boutique rapide, claire et pensee pour R.Zayane.</h2>
@@ -116,6 +116,7 @@ export default function HomePage({ onCollection }) {
       </footer>    </>
   );
 }
+
 
 
 

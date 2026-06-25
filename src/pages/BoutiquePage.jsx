@@ -21,7 +21,7 @@ export default function BoutiquePage({ category, setCategory, products, onAdd })
       </section>
       <section className="shop-layout" id="products">
         <div className="products-area">
-          <div className="section-head">
+          <div className="section-head" data-reveal>
             <div>
               <p>Collection Zayane</p>
               <h2>Vetements pour bouger avec style</h2>
@@ -63,7 +63,7 @@ export default function BoutiquePage({ category, setCategory, products, onAdd })
 
 function ProductCard({ product, onAdd, onPreview }) {
   return (
-    <article className="product-card">
+    <article className="product-card" data-reveal>
       <div className="image-wrap">
         <button className="product-image-button" onClick={onPreview} aria-label={`Voir ${product.name}`}>
           <img src={product.image} alt={product.name} />
@@ -103,3 +103,4 @@ function Footer() {
     </footer>
   );
 }
+
