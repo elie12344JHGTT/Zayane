@@ -1987,3 +1987,87 @@ footer span {
     max-height: 68vh;
   }
 }
+
+.payment-notice {
+  position: fixed;
+  top: 84px;
+  left: 50%;
+  z-index: 120;
+  width: min(92vw, 720px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 16px 18px;
+  transform: translateX(-50%);
+  background: #111;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.28);
+}
+
+.payment-notice.success {
+  background: #126b35;
+}
+
+.payment-notice.error {
+  background: #8a1f2d;
+}
+
+.payment-notice.cancel {
+  background: #4f4f4f;
+}
+
+.payment-notice div {
+  display: grid;
+  gap: 4px;
+}
+
+.payment-notice strong {
+  font-size: 0.9rem;
+  text-transform: uppercase;
+}
+
+.payment-notice span,
+.payment-notice small {
+  line-height: 1.35;
+}
+
+.payment-notice small {
+  opacity: 0.82;
+  font-weight: 800;
+}
+
+.payment-notice button {
+  flex: 0 0 auto;
+  position: relative;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.payment-notice button span {
+  position: absolute;
+  width: 16px;
+  height: 2px;
+  background: #fff;
+}
+
+.payment-notice button span:first-child {
+  transform: rotate(45deg);
+}
+
+.payment-notice button span:last-child {
+  transform: rotate(-45deg);
+}
+
+@media (max-width: 760px) {
+  .payment-notice {
+    top: 74px;
+    align-items: flex-start;
+    padding: 14px;
+  }
+}

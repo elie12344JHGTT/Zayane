@@ -9,12 +9,40 @@ import './styles.css';
 
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
 
+function getPaymentNotice() {
+  const params = new URLSearchParams(window.location.search);
+  const status = params.get('payment');
+  const orderRef = params.get('order_ref');
+
+  const messages = {
+    success: {
+      status: 'success',
+      title: 'Paiement reussi',
+      message: 'Merci pour votre commande. Nous allons la traiter rapidement.',
+    },
+    error: {
+      status: 'error',
+      title: 'Paiement echoue',
+      message: 'Le paiement n a pas pu etre finalise. Verifiez vos informations et reessayez.',
+    },
+    cancel: {
+      status: 'cancel',
+      title: 'Paiement annule',
+      message: 'Vous pouvez reprendre votre commande quand vous le souhaitez.',
+    },
+  };
+
+  if (!messages[status]) return null;
+
+  return { ...messages[status], orderRef };
+}
 function App() {
   const [category, setCategory] = useState('all');
   const [cart, setCart] = useState([]);
   const [page, setPage] = useState('home');
   const [customer, setCustomer] = useState({ name: '', email: '', phone: '', address: '', city: '' });
   const [checkout, setCheckout] = useState({ currency: 'USD', method: 'online' });
+  const [paymentNotice, setPaymentNotice] = useState(() => getPaymentNotice());
 
   const filteredProducts = useMemo(() => {
     if (category === 'all') return products;
@@ -62,6 +90,7 @@ function App() {
 
   return (
     <main>
+      {paymentNotice && <PaymentNotice notice={paymentNotice} onClose={() => setPaymentNotice(null)} />}
       {page !== 'cart' && (
         <Header
           count={count}
@@ -102,6 +131,21 @@ function App() {
   );
 }
 
+function PaymentNotice({ notice, onClose }) {
+  return (
+    <div className={`payment-notice ${notice.status}`} role="status" aria-live="polite">
+      <div>
+        <strong>{notice.title}</strong>
+        <span>{notice.message}</span>
+        {notice.orderRef && <small>Reference commande: {notice.orderRef}</small>}
+      </div>
+      <button onClick={onClose} aria-label="Fermer le message de paiement">
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  );
+}
 function Header({ count, onCart, onHome, onBoutique, onContact, solid }) {
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -320,6 +364,9 @@ function CartPage({ cart, total, customer, setCustomer, checkout, setCheckout, o
 }
 
 createRoot(document.getElementById('root')).render(<App />);
+
+
+
 
 
 
