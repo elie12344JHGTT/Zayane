@@ -1,5 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@700;800;900&display=swap');
+
 :root {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body);
+  --font-body: 'Inter', Arial, Helvetica, sans-serif;
+  --font-display: 'Playfair Display', Georgia, serif;
   color: #111;
   background: #fff;
   font-synthesis: none;
@@ -536,7 +540,9 @@ footer span {
 
   .shop-layout > .cart-panel {
     display: none;
-  }.product-grid {
+  }
+
+  .product-grid {
     grid-template-columns: repeat(2, minmax(220px, 1fr));
   }
 }
@@ -2124,3 +2130,16 @@ footer span {
 .payment-alert.cancel {
   color: #5f5f5f;
 }
+
+.hero-content h1,
+.section-head h2,
+.brand-section h2,
+.cart-page-heading h1,
+.home-promo-head h2,
+.editorial-copy h2,
+.process-copy h2,
+.contact-hero h1 {
+  font-family: var(--font-display);
+  font-weight: 900;
+}
+
