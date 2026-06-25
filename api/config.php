@@ -29,7 +29,7 @@ function apply_cors_headers(): void
     $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
     $allowed = array_filter(array_map('trim', explode(',', (string)config_value(
         'CORS_ALLOWED_ORIGINS',
-        'http://127.0.0.1:5173,http://localhost:5173'
+        'http://127.0.0.1:5173,http://localhost:5173,https://zayane.onrender.com'
     ))));
 
     if ($origin !== '' && in_array($origin, $allowed, true)) {
@@ -37,7 +37,8 @@ function apply_cors_headers(): void
         header('Vary: Origin');
     }
 
-    header('Access-Control-Allow-Headers: Content-Type');
+    header('Access-Control-Allow-Headers: Content-Type, Accept');
+    header('Access-Control-Max-Age: 86400');
     header('Access-Control-Allow-Methods: POST, OPTIONS');
 }
 function json_response(array $payload, int $status = 200): void
