@@ -291,7 +291,7 @@ function CartPage({ cart, total, customer, setCustomer, checkout, setCheckout, o
   const canCheckout = cart.length > 0 && formIsValid;
 
   async function pollPaymentStatus(orderRef, attempt = 0) {
-    if (!orderRef || attempt >= 24) return;
+    if (!orderRef || attempt >= 45) return;
 
     try {
       const response = await fetch(`${API_BASE_URL}/api/easypay/status.php?order_ref=${encodeURIComponent(orderRef)}`);
@@ -316,7 +316,7 @@ function CartPage({ cart, total, customer, setCustomer, checkout, setCheckout, o
       // Le suivi reprendra au prochain essai tant que la page reste ouverte.
     }
 
-    window.setTimeout(() => pollPaymentStatus(orderRef, attempt + 1), 4000);
+    window.setTimeout(() => pollPaymentStatus(orderRef, attempt + 1), 2000);
   }
 
   async function handleCheckout() {
@@ -466,6 +466,4 @@ function CartPage({ cart, total, customer, setCustomer, checkout, setCheckout, o
 }
 
 createRoot(document.getElementById('root')).render(<App />);
-
-
 

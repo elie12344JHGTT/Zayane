@@ -23,22 +23,33 @@ if (!is_array($transaction) || !is_array($payment)) {
 $orderRef = trim((string)($transaction['order_ref'] ?? ''));
 $transactionReference = trim((string)($transaction['reference'] ?? ''));
 $paymentReference = trim((string)($payment['reference'] ?? ''));
-$status = strtoupper(trim((string)($payment['status'] ?? '')));
+$rawStatus = strtoupper(trim((string)($payment['status'] ?? '')));
 $channel = trim((string)($payment['channel'] ?? ''));
 
-if ($orderRef === '' || $transactionReference === '' || $paymentReference === '' || $status === '') {
+if ($orderRef === '' || $transactionReference === '' || $paymentReference === '' || $rawStatus === '') {
     json_response(['ok' => false, 'message' => 'Champs IPN obligatoires manquants.'], 422);
 }
 
-if (!in_array($status, ['SUCCESS', 'CANCELED', 'DECLINED'], true)) {
+if (!in_array($rawStatus, ['SUCCESS', 'CANCELED', 'DECLINED'], true)) {
     json_response(['ok' => false, 'message' => 'Status IPN non reconnu.'], 422);
 }
+
+$payloadText = strtolower(json_encode($payload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+$looksLikeFailure = preg_match('/solde|insuffisant|insufficient|refus|declin|declined|failed|failure|echec|echoue|erreur/', $payloadText) === 1;
+$status = $rawStatus === 'CANCELED' && $looksLikeFailure ? 'DECLINED' : $rawStatus;
+$message = match ($status) {
+    'SUCCESS' => 'Paiement reussi. Merci pour votre commande.',
+    'CANCELED' => 'Paiement annule. Vous pouvez reprendre votre commande.',
+    'DECLINED' => 'Paiement echoue ou refuse. Veuillez reessayer.',
+    default => 'Statut de paiement mis a jour.',
+};
 
 $record = [
     'received_at' => date('c'),
     'order_ref' => $orderRef,
     'transaction_reference' => $transactionReference,
     'payment_reference' => $paymentReference,
+    'raw_status' => $rawStatus,
     'status' => $status,
     'channel' => $channel,
     'payload' => $payload,
@@ -53,15 +64,11 @@ file_put_contents(
 
 save_order_status($orderRef, [
     'status' => $status,
+    'raw_status' => $rawStatus,
     'method' => $channel,
     'transaction_reference' => $transactionReference,
     'payment_reference' => $paymentReference,
-    'message' => match ($status) {
-        'SUCCESS' => 'Paiement reussi. Merci pour votre commande.',
-        'CANCELED' => 'Paiement annule. Vous pouvez reprendre votre commande.',
-        'DECLINED' => 'Paiement echoue ou refuse. Veuillez reessayer.',
-        default => 'Statut de paiement mis a jour.',
-    },
+    'message' => $message,
 ]);
 
 json_response([
@@ -69,6 +76,5 @@ json_response([
     'message' => 'IPN recue.',
     'order_ref' => $orderRef,
     'status' => $status,
+    'raw_status' => $rawStatus,
 ]);
-
-
