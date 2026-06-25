@@ -316,23 +316,23 @@ function CartPage({ cart, total, customer, setCustomer, checkout, setCheckout, o
           </div>
           <label>
             Nom complet
-            <input required value={customer.name} onChange={(event) => setCustomer({ ...customer, name: event.target.value })} placeholder="Votre nom" />
+            <input required type="text" minLength="2" maxLength="80" autoComplete="name" value={customer.name} onChange={(event) => setCustomer({ ...customer, name: event.target.value })} placeholder="Votre nom" />
           </label>
           <label>
             Email
-            <input required type="email" value={customer.email} onChange={(event) => setCustomer({ ...customer, email: event.target.value })} placeholder="client@email.com" />
+            <input required type="email" inputMode="email" autoComplete="email" maxLength="120" value={customer.email} onChange={(event) => setCustomer({ ...customer, email: event.target.value })} placeholder="client@email.com" />
           </label>
           <label>
             Telephone
-            <input required value={customer.phone} onChange={(event) => setCustomer({ ...customer, phone: event.target.value })} placeholder="+243 ..." />
+            <input required type="tel" inputMode="tel" autoComplete="tel" pattern="[+0-9 ()-]{8,20}" minLength="8" maxLength="20" value={customer.phone} onChange={(event) => setCustomer({ ...customer, phone: event.target.value.replace(/[^0-9+ ()-]/g, '') })} placeholder="+243 ..." title="Entrez un numero valide, avec chiffres, espaces, +, tirets ou parentheses." />
           </label>
           <label>
             Adresse de livraison
-            <input required value={customer.address} onChange={(event) => setCustomer({ ...customer, address: event.target.value })} placeholder="Avenue, quartier, commune" />
+            <input required type="text" minLength="4" maxLength="160" autoComplete="street-address" value={customer.address} onChange={(event) => setCustomer({ ...customer, address: event.target.value })} placeholder="Avenue, quartier, commune" />
           </label>
           <label>
             Ville
-            <input required value={customer.city} onChange={(event) => setCustomer({ ...customer, city: event.target.value })} placeholder="Kinshasa" />
+            <input required type="text" minLength="2" maxLength="80" autoComplete="address-level2" value={customer.city} onChange={(event) => setCustomer({ ...customer, city: event.target.value })} placeholder="Kinshasa" />
           </label>
           <div className="payment-methods currency-methods">
             <span>Devise de paiement</span>
@@ -376,6 +376,7 @@ function CartPage({ cart, total, customer, setCustomer, checkout, setCheckout, o
 }
 
 createRoot(document.getElementById('root')).render(<App />);
+
 
 
 
