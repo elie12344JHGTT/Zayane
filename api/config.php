@@ -57,5 +57,3 @@ function require_config(string $key): string
     return $value;
 }
 
-
-

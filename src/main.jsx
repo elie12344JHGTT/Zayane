@@ -265,7 +265,19 @@ function CartPage({ cart, total, customer, setCustomer, checkout, setCheckout, o
         }),
       });
 
-      const data = await response.json();
+      const rawResponse = await response.text();
+      let data = null;
+
+      try {
+        data = rawResponse ? JSON.parse(rawResponse) : null;
+      } catch {
+        data = null;
+      }
+
+      if (!data) {
+        throw new Error('Le serveur de paiement n a pas renvoye de reponse valide. Veuillez reessayer.');
+      }
+
       if (!response.ok || !data.ok) {
         throw new Error(data.message || 'Le paiement n a pas pu etre initialise.');
       }
@@ -364,6 +376,7 @@ function CartPage({ cart, total, customer, setCustomer, checkout, setCheckout, o
 }
 
 createRoot(document.getElementById('root')).render(<App />);
+
 
 
 
