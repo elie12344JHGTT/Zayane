@@ -2116,3 +2116,11 @@ footer span {
     transition: none;
   }
 }
+
+.payment-alert.pending {
+  color: #806000;
+}
+
+.payment-alert.cancel {
+  color: #5f5f5f;
+}

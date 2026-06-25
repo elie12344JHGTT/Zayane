@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../orders.php';
 
 apply_cors_headers();
 
@@ -137,15 +138,26 @@ if ($method === 'mobile-money') {
     }
 
     $body = $response['body'];
+    $mobileOk = (int)($body['code'] ?? 0) === 1;
+
+    save_order_status($orderRef, [
+        'status' => $mobileOk ? 'PENDING' : 'DECLINED',
+        'method' => 'mobile-money',
+        'reference' => $body['reference'] ?? null,
+        'message' => $mobileOk
+            ? 'Paiement Mobile Money en attente de confirmation.'
+            : ($body['message'] ?? 'Paiement Mobile Money refuse.'),
+    ]);
+
     json_response([
-        'ok' => (int)($body['code'] ?? 0) === 1,
+        'ok' => $mobileOk,
         'method' => 'mobile-money',
         'order_ref' => $orderRef,
         'reference' => $body['reference'] ?? null,
         'message' => $body['message'] ?? 'Paiement Mobile Money initialise.',
         'amount' => $amount,
         'currency' => $currency,
-    ], (int)($body['code'] ?? 0) === 1 ? 200 : 422);
+    ], $mobileOk ? 200 : 422);
 }
 
 $url = "https://www.e-com-easypay.com/$mode/payment/initialization?$query";
@@ -175,6 +187,13 @@ $body = $response['body'];
 $reference = $body['reference'] ?? null;
 $ok = (int)($body['code'] ?? 0) === 1 && $reference;
 
+save_order_status($orderRef, [
+    'status' => $ok ? 'PENDING' : 'DECLINED',
+    'method' => 'online',
+    'reference' => $reference,
+    'message' => $ok ? 'Paiement en attente de finalisation.' : ($body['message'] ?? 'Transaction non initialisee.'),
+]);
+
 json_response([
     'ok' => $ok,
     'method' => 'online',
@@ -185,4 +204,6 @@ json_response([
     'amount' => $amount,
     'currency' => $currency,
 ], $ok ? 200 : 422);
+
+
 

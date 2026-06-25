@@ -267,7 +267,7 @@ function CartPanel({ cart, total, onQty, canCheckout = false, onCheckout, isProc
             <small>{cdfMoney.format(total * USD_TO_CDF)}</small>
           </div>
         </div>
-        <button onClick={onCheckout} disabled={!canCheckout || isProcessing || paymentStatus === 'success'}>{isProcessing ? 'Traitement...' : paymentStatus === 'success' ? 'Paiement initialise' : 'Passer au paiement'}</button>
+        <button onClick={onCheckout} disabled={!canCheckout || isProcessing || ['success', 'pending'].includes(paymentStatus)}>{isProcessing ? 'Traitement...' : paymentStatus === 'success' ? 'Paiement confirme' : paymentStatus === 'pending' ? 'Paiement en attente' : 'Passer au paiement'}</button>
         {!canCheckout && <small className="checkout-hint">Remplissez le formulaire pour continuer.</small>}
         {paymentMessage && <small className={`payment-alert ${paymentStatus}`}>{paymentMessage}</small>}
       </div>
@@ -290,8 +290,37 @@ function CartPage({ cart, total, customer, setCustomer, checkout, setCheckout, o
   );
   const canCheckout = cart.length > 0 && formIsValid;
 
+  async function pollPaymentStatus(orderRef, attempt = 0) {
+    if (!orderRef || attempt >= 24) return;
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/easypay/status.php?order_ref=${encodeURIComponent(orderRef)}`);
+      const data = await response.json();
+      const status = data.status;
+
+      if (status === 'SUCCESS') {
+        setPaymentState({ loading: false, status: 'success', message: data.message || 'Paiement reussi. Merci pour votre commande.' });
+        return;
+      }
+
+      if (status === 'CANCELED') {
+        setPaymentState({ loading: false, status: 'cancel', message: data.message || 'Paiement annule. Vous pouvez reprendre votre commande.' });
+        return;
+      }
+
+      if (status === 'DECLINED') {
+        setPaymentState({ loading: false, status: 'error', message: data.message || 'Paiement echoue ou refuse. Veuillez reessayer.' });
+        return;
+      }
+    } catch {
+      // Le suivi reprendra au prochain essai tant que la page reste ouverte.
+    }
+
+    window.setTimeout(() => pollPaymentStatus(orderRef, attempt + 1), 4000);
+  }
+
   async function handleCheckout() {
-    if (!canCheckout || paymentState.loading || paymentState.status === 'success') return;
+    if (!canCheckout || paymentState.loading || ['success', 'pending'].includes(paymentState.status)) return;
 
     setPaymentState({ loading: true, message: '', status: '' });
     try {
@@ -334,11 +363,15 @@ function CartPage({ cart, total, customer, setCustomer, checkout, setCheckout, o
 
       setPaymentState({
         loading: false,
-        status: 'success',
+        status: data.reference ? 'pending' : 'success',
         message: data.reference
           ? 'Votre demande de paiement Mobile Money a ete envoyee. Confirmez la transaction sur votre telephone pour finaliser la commande.'
           : data.message || 'Paiement initialise.',
       });
+
+      if (data.reference && data.order_ref) {
+        pollPaymentStatus(data.order_ref);
+      }
     } catch (error) {
       setPaymentState({ loading: false, status: 'error', message: error.message });
     }
@@ -433,5 +466,6 @@ function CartPage({ cart, total, customer, setCustomer, checkout, setCheckout, o
 }
 
 createRoot(document.getElementById('root')).render(<App />);
+
 
 

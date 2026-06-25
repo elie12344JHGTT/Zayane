@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../orders.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     json_response(['ok' => false, 'message' => 'Methode non autorisee.'], 405);
@@ -50,9 +51,24 @@ file_put_contents(
     FILE_APPEND | LOCK_EX,
 );
 
+save_order_status($orderRef, [
+    'status' => $status,
+    'method' => $channel,
+    'transaction_reference' => $transactionReference,
+    'payment_reference' => $paymentReference,
+    'message' => match ($status) {
+        'SUCCESS' => 'Paiement reussi. Merci pour votre commande.',
+        'CANCELED' => 'Paiement annule. Vous pouvez reprendre votre commande.',
+        'DECLINED' => 'Paiement echoue ou refuse. Veuillez reessayer.',
+        default => 'Statut de paiement mis a jour.',
+    },
+]);
+
 json_response([
     'ok' => true,
     'message' => 'IPN recue.',
     'order_ref' => $orderRef,
     'status' => $status,
 ]);
+
+

@@ -39,7 +39,7 @@ function apply_cors_headers(): void
 
     header('Access-Control-Allow-Headers: Content-Type, Accept');
     header('Access-Control-Max-Age: 86400');
-    header('Access-Control-Allow-Methods: POST, OPTIONS');
+    header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 }
 function json_response(array $payload, int $status = 200): void
 {
@@ -57,4 +57,5 @@ function require_config(string $key): string
     }
     return $value;
 }
+
 
